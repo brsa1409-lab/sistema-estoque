@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Almox Tech</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>📦Almox Tech</h1>
+        <p>Controle seus produtos de forma simples</p>
+    </header>
+
+
+    <main>
+
+        <section class="cards">
+
+            <div class="card">
+                <span>Produtos</span>
+                <strong>{{ produtos|length }}</strong>
+            </div>
+
+            <div class="card">
+                <span>Valor do estoque</span>
+                <strong>
+                    R$ {{ "%.2f"|format(valor_total) }}
+                </strong>
+            </div>
+
+        </section>
+
+
+        <section class="cadastro">
+
+            <h2>➕ Cadastrar produto</h2>
+
+            <form action="/cadastrar" method="POST">
+
+                <input
+                    type="text"
+                    name="nome"
+                    placeholder="Nome do produto"
+                    required
+                >
+
+                <input
+                    type="number"
+                    name="quantidade"
+                    placeholder="Quantidade"
+                    min="0"
+                    required
+                >
+
+                <input
+                    type="number"
+                    name="preco"
+                    placeholder="Preço"
+                    step="0.01"
+                    min="0"
+                    required
+                >
+
+                <button type="submit">
+                    Cadastrar
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <section class="estoque">
+
+            <h2>📋 Produtos cadastrados</h2>
+
+            {% if produtos %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Preço</th>
+                        <th>Total</th>
+                        <th>Ações</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for produto in produtos %}
+
+                    <tr>
+
+                        <td>{{ produto.nome }}</td>
+
+                        <td>
+
+                            <form
+                                action="/atualizar/{{ loop.index0 }}"
+                                method="POST"
+                                class="form-quantidade"
+                            >
+
+                                <input
+                                    type="number"
+                                    name="quantidade"
+                                    value="{{ produto.quantidade }}"
+                                    min="0"
+                                >
+
+                                <button type="submit">
+                                    Atualizar
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                        <td>
+                            R$ {{ "%.2f"|format(produto.preco) }}
+                        </td>
+
+                        <td>
+                            R$
+                            {{
+                                "%.2f"|format(
+                                    produto.quantidade * produto.preco
+                                )
+                            }}
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="/excluir/{{ loop.index0 }}"
+                                class="excluir"
+                            >
+                                🗑️ Excluir
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="vazio">
+                📦 Nenhum produto cadastrado ainda.
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
